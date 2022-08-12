@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_signup/signin.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Home extends StatefulWidget {
   static const routeName = 'home';
@@ -121,6 +123,20 @@ class _HomeState extends State<Home> {
         title: Text(
           'Users List',
         ),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final googleSignIn = GoogleSignIn();
+              final user = await googleSignIn.signOut();
+              if (user == null) {
+                Navigator.pushNamed(context, Signin.routeName);
+              }
+            },
+            icon: Icon(
+              Icons.logout_outlined,
+            ),
+          ),
+        ],
       ),
       body: Container(
         child: StreamBuilder(

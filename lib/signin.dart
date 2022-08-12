@@ -1,10 +1,13 @@
+// ignore: unused_import
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_signup/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'home.dart';
 
 class Signin extends StatefulWidget {
+  static const routeName = 'signin';
   const Signin({Key key}) : super(key: key);
 
   @override
@@ -31,19 +34,34 @@ class _SigninState extends State<Signin> {
     var valid = _formKey.currentState.validate();
     User user;
     try {
-      UserCredential userCredential =
-          await _auth.signInWithEmailAndPassword(
-              email: _emailController.text, password: _passwordController.text);
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: _emailController.text, password: _passwordController.text);
       user = userCredential.user;
 
-      if(user != null) {
+      if (user != null) {
         Navigator.pushNamed(context, Home.routeName);
       }
-      
     } catch (e) {}
     if (!valid) {
       return;
     } else {}
+  }
+
+  _signinWithGoogle() async {
+    try {
+      final googleSignIn = GoogleSignIn();
+      final user = await googleSignIn.signIn();
+      if (user != null) {
+        print('User name ' + user.displayName);
+        if (user != null) {
+          Navigator.pushNamed(context, Home.routeName);
+        }
+      } else {
+        print('Sign in failed');
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   @override
@@ -135,7 +153,16 @@ class _SigninState extends State<Signin> {
                     ),
                   )
                 ],
-              )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: _signinWithGoogle,
+                child: Text(
+                  'Sign in with Google',
+                ),
+              ),
             ],
           ),
         ),
